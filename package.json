@@ -17,6 +17,7 @@
     "html-webpack-plugin": "^2.9.0",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
+    "sql.js": "^0.2.21",
     "webpack": "^1.12.14"
   }
 }

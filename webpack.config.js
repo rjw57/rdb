@@ -10,12 +10,16 @@ var plugins = [
   new ExtractTextPlugin("[name].css"),
   new webpack.optimize.DedupePlugin(),
   new HtmlWebpackPlugin({ title: "Rich's DB" }),
+  new webpack.optimize.CommonsChunkPlugin({
+    name: "sql.js", filename: "sql.js",
+  }),
 ];
 
 if(isProduction) {
   plugins = plugins.concat([
     new webpack.DefinePlugin({ "process.env": { "NODE_ENV": '"production"' } }),
     new webpack.optimize.UglifyJsPlugin({
+      exclude: /sql\.js$/,
       compress: { unused: true, dead_code: true, warnings: false },
     }),
   ]);
@@ -23,12 +27,16 @@ if(isProduction) {
 
 module.exports = {
   context: path.join(__dirname, "src"),
-  entry: "./entry.js",
+  entry: {
+    app: "./entry.js",
+    "sql.js": ["sql.js"],
+  },
   output: {
     path: path.join(__dirname, "build"),
     filename: "bundle.js",
   },
   module: {
+    noParse: [ /sql\.js\/.*\.js$/ ],
     loaders: [
       {
         test: /\.jsx?$/,
@@ -36,7 +44,10 @@ module.exports = {
         loader: "babel",
         query: { presets: ["react", "es2015"], },
       },
-      {test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css-loader") },
+      {
+        test: /\.css$/,
+        loader: ExtractTextPlugin.extract("style-loader", "css-loader")
+      },
       // For Bootstrap
       {test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=application/font-woff"},
       {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=application/octet-stream"},
