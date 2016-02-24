@@ -1,5 +1,26 @@
-import React from "react";
+import React from 'react'
+import { connect } from 'react-redux'
 
-export default (props) => (
-  <div><h1>Hello!</h1></div>
-);
+function stateToProps(state) {
+  return {
+    isDatabaseLoaded: state.isDatabaseLoaded,
+  }
+}
+
+function dispatchToProps(dispatch) {
+  return {
+    onNewDatabase() {
+      console.log('hello')
+    }
+  }
+}
+
+export default connect(
+  stateToProps, dispatchToProps
+)((props) => {
+  if(!props.isDatabaseLoaded) {
+    return <div><input type="file" onChange={props.onNewDatabase}/></div>
+  }
+
+  return <div><h1>Loaded</h1></div>
+})
