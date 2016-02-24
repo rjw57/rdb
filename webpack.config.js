@@ -28,7 +28,7 @@ if(isProduction) {
 module.exports = {
   context: path.join(__dirname, "src"),
   entry: {
-    app: "./entry.js",
+    app: "./entry.jsx",
     "sql.js": ["sql.js"],
   },
   output: {
