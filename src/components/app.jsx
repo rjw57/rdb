@@ -2,9 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 function stateToProps(state) {
-  return {
-    isDatabaseLoaded: state.isDatabaseLoaded,
-  }
+  return { }
 }
 
 function dispatchToProps(dispatch) {
@@ -18,9 +16,5 @@ function dispatchToProps(dispatch) {
 export default connect(
   stateToProps, dispatchToProps
 )((props) => {
-  if(!props.isDatabaseLoaded) {
-    return <div><input type="file" onChange={props.onNewDatabase}/></div>
-  }
-
-  return <div><h1>Loaded</h1></div>
+  return <div><h1>Hello</h1></div>
 })
