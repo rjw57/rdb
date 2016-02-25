@@ -1,8 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import SchemaTree from './schema-tree.js'
+
 function stateToProps(state) {
-  return { }
+  let { schema } = state
+  return { schema }
 }
 
 function dispatchToProps(dispatch) {
@@ -13,8 +16,12 @@ function dispatchToProps(dispatch) {
   }
 }
 
-export default connect(
+let App = connect(
   stateToProps, dispatchToProps
-)((props) => {
-  return <div><h1>Hello</h1></div>
-})
+)(props => (
+  <div>
+    <SchemaTree schema={props.schema} />
+  </div>
+))
+
+export default App
