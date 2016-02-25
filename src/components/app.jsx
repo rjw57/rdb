@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import SchemaTree from './schema-tree.js'
+import TableList from './tablelist.jsx'
 
 function stateToProps(state) {
   let { schema } = state
@@ -20,7 +20,7 @@ let App = connect(
   stateToProps, dispatchToProps
 )(props => (
   <div>
-    <SchemaTree schema={props.schema} />
+    <TableList masterTable={props.schema.masterTable} />
   </div>
 ))
 

@@ -4,36 +4,39 @@ import { combineReducers } from 'redux'
 
 import { CHANGE_DATABASE } from './actions.js'
 
-let currentDatabase = new sql.Database()
-
-function updateSchema(existingSchema, database) {
-  let schema = { tables: [], views: [] }
-  let masterTable = currentDatabase.exec('SELECT * FROM SQLITE_MASTER;')[0]
-
-  if(masterTable) {
-    masterTable.values.forEach((row) => {
-      if(row[0] === 'table') {
-        schema.tables.push({
-          name: row[2], sql: row[4]
-        })
-      } else if(row[0] === 'view') {
-        schema.views.push({
-          name: row[2], sql: row[4]
-        })
-      }
-    })
-  }
-
-  return schema
+function fetchMasterTable(database) {
+  let table = []
+  database.each('SELECT * FROM SQLITE_MASTER', row => table.push(row))
+  return table
 }
 
-function schema(state, action) {
-  if(!state) { state = updateSchema(currentDatabase) }
+function unsafeSqlQuoteString(string) {
+  return "'" + string.replace(/'/g, "''") + "'"
+}
 
+function fetchTableInfo(database, tablename) {
+  let table = []
+  database.each(
+    `PRAGMA table_info(${unsafeSqlQuoteString(tablename)})`,
+    row => table.push(row)
+  )
+  return table
+}
+
+const initialSchema = {
+  masterTable: [],
+  tables: {},
+}
+
+function schema(state = initialSchema, action) {
   switch(action.type) {
     case CHANGE_DATABASE:
-      currentDatabase = action.database
-      state = updateSchema(currentDatabase)
+      let masterTable = fetchMasterTable(action.database)
+      let tables = {}
+      masterTable.filter(row => row.type == 'table').forEach(row => (
+        tables[row.name] = fetchTableInfo(action.database, row.name)
+      ))
+      state = { masterTable, tables };
       return state
     default:
       return state
