@@ -37,6 +37,4 @@ render(
 
 // HACK: fetch sample database
 import { fetchDatabase } from './actions.js'
-
-const DATABASE_URI = '../chinook/Chinook_Sqlite_AutoIncrementPKs.sqlite'
-store.dispatch(fetchDatabase(DATABASE_URI))
+store.dispatch(fetchDatabase('sampledb.sqlite'))

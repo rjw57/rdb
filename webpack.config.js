@@ -3,6 +3,7 @@ var webpack = require('webpack');
 
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 var isProduction = false;
 
@@ -13,6 +14,12 @@ var plugins = [
   new webpack.optimize.CommonsChunkPlugin({
     name: 'sql.js', filename: 'sql.js',
   }),
+  new CopyWebpackPlugin([
+    {
+      from: '../chinook/Chinook_Sqlite_AutoIncrementPKs.sqlite',
+      to: 'sampledb.sqlite'
+    },
+  ]),
 ];
 
 if(isProduction) {
