@@ -26,7 +26,7 @@ TableList.propTypes = {
     name: React.PropTypes.string.isRequired,
     type: React.PropTypes.string.isRequired,
   })).isRequired,
-  onClick: React.PropTypes.function,
+  onClick: React.PropTypes.func,
 }
 
 export default TableList
