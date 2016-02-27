@@ -11,6 +11,12 @@ class Database {
     this._db = db;
   }
 
+  // Returns a Promise resolved with an ArrayBuffer whose contents contains the
+  // database
+  export() {
+    return new Promise(resolve => resolve(this._db.export().buffer));
+  }
+
   // Returns a Promise which is resolved with an object of the following shape
   // for a single query:
   //

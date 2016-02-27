@@ -40,7 +40,16 @@ let App = connect(stateToProps)(props => {
   };
 
   let save = () => {
-    console.log('save');
+    if(!props.database) { return; }
+    props.database.export().then(buffer => {
+      let blob = new Blob([buffer], {type: 'octet/stream'});
+      let url = window.URL.createObjectURL(blob);
+      let a = document.createElement('a');
+      a.href = url;
+      a.download = 'database.sqlite';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
   }
 
   let openFile = file => {
