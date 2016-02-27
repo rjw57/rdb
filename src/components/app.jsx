@@ -59,6 +59,13 @@ let App = connect(stateToProps)(props => {
     reader.readAsArrayBuffer(file);
   }
 
+  let handleSelectObject = name => {
+    props.dispatch(selectObject(name))
+    if(!props.objectInfoByName.get(name)) {
+      props.dispatch(updateObjectInfo(props.database, name));
+    }
+  };
+
   return (
     <Grid>
       <Tabs defaultActiveKey={1} animation={false}>
@@ -67,18 +74,11 @@ let App = connect(stateToProps)(props => {
             <Row>
               <Col md={3}>
                 <ObjectSelect
-                  objects={props.objects}
-                  onSelect={name => {
-                    props.dispatch(selectObject(name))
-                    if(!props.objectInfoByName.get(name)) {
-                      props.dispatch(updateObjectInfo(props.database, name));
-                    }
-                  }}
-                />
+                  objects={props.objects} onSelect={handleSelectObject} />
               </Col>
               <Col md={9}>
-                <ObjectView readOnlyQuery={readOnlyQuery}
-                            info={selectedObjectInfo} />
+                <ObjectView
+                  readOnlyQuery={readOnlyQuery} info={selectedObjectInfo} />
               </Col>
             </Row>
           </Grid>
