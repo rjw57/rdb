@@ -11,13 +11,14 @@ import { applyMiddleware, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import promise from 'redux-promise';
 import createLogger from 'redux-logger';
+import DevTools from './components/devtools.jsx';
 
 import reducer from './reducers.js';
 
 const logger = createLogger();
 const finalCreateStore = compose(
-    applyMiddleware(thunk, promise, logger),
-    window.devToolsExtension ? window.devToolsExtension() : f => f
+  applyMiddleware(thunk, promise, logger),
+  DevTools.instrument()
 )(createStore);
 const store = finalCreateStore(reducer);
 
@@ -30,7 +31,10 @@ import App from './components/app.jsx';
 
 render(
   <Provider store={store}>
-    <App />
+    <div>
+      <App />
+      <DevTools />
+    </div>
   </Provider>,
   containerElem
 )
