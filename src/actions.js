@@ -1,5 +1,5 @@
 import { createAction } from 'redux-actions';
-import sql from 'sql.js';
+import Database from './database.js';
 
 let requestDatabase = createAction('REQUEST_DATABASE');
 let changeDatabase = createAction('CHANGE_DATABASE');
@@ -11,10 +11,7 @@ export function fetchDatabase(uri) { return dispatch => {
   // TODO: Error handling
   fetch(uri)
     .then(response => response.arrayBuffer())
-    .then(body => {
-      let newDb = new sql.Database(new Uint8Array(body))
-      dispatch(changeDatabase(newDb))
-    });
+    .then(body => dispatch(changeDatabase(Database.fromArrayBuffer(body))));
 } }
 
 // Select a SQLite object (table, view, etc) from the sqlite_master table for

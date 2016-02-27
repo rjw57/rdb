@@ -8,13 +8,16 @@ import TableView from './tableview.jsx'
 import { selectObject } from '../actions.js'
 
 let stateToProps = state => {
-  let { selectedObjectName, schema } = state;
+  let { selectedObjectName, database } = state;
+
+  let schema = database ? database.fetchSchema() : null;
+  let selectedObject = schema ? schema.get(selectedObjectName) : null;
   let selectedObjectType = null;
-  let selectedObject = schema.get(selectedObjectName);
   if(selectedObject) {
     selectedObjectType = selectedObject.get('type');
     selectedObject = selectedObject.set('name', selectedObjectName);
   }
+
   return { schema, selectedObject, selectedObjectName, selectedObjectType };
 };
 
@@ -26,7 +29,7 @@ let App = connect(stateToProps, dispatchToProps)(props => (
   <Grid>
     <Row>
       <Col md={4}>
-        <ObjectSelect objects={props.schema} onSelect={props.onSelectObject} />
+        <ObjectSelect schema={props.schema} onSelect={props.onSelectObject} />
       </Col>
       <Col md={8}>
         { props.selectedObjectType == 'table' ? (

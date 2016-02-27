@@ -6,11 +6,13 @@ let ObjectSelect = props => {
   let tables = [];
 
   // Split objects into lists based on type
-  for(let [name, obj] of props.objects.entries()) {
-    switch(obj.get('type')) {
-      case 'table':
-        tables.push(Object.assign({ name }, obj));
-        break;
+  if(props.schema) {
+    for(let [name, obj] of props.schema.entries()) {
+      switch(obj.get('type')) {
+        case 'table':
+          tables.push(Object.assign({ name }, obj));
+          break;
+      }
     }
   }
 
@@ -34,10 +36,10 @@ let ObjectSelect = props => {
 };
 
 ObjectSelect.propTypes = {
-  objects: ImmutablePropTypes.mapOf(ImmutablePropTypes.mapContains({
+  schema: ImmutablePropTypes.mapOf(ImmutablePropTypes.mapContains({
     type: React.PropTypes.string.isRequired,
     columns: ImmutablePropTypes.list,
-  })).isRequired,
+  })),
   onSelect: React.PropTypes.func,
 };
 
