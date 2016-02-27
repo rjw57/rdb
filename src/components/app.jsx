@@ -8,17 +8,8 @@ import TableView from './tableview.jsx'
 import { selectObject } from '../actions.js'
 
 let stateToProps = state => {
-  let { selectedObjectName, database } = state;
-
-  let schema = database ? database.fetchSchema() : null;
-  let selectedObject = schema ? schema.get(selectedObjectName) : null;
-  let selectedObjectType = null;
-  if(selectedObject) {
-    selectedObjectType = selectedObject.get('type');
-    selectedObject = selectedObject.set('name', selectedObjectName);
-  }
-
-  return { schema, selectedObject, selectedObjectName, selectedObjectType };
+  let { objects } = state;
+  return { objects };
 };
 
 let dispatchToProps = dispatch => ({
@@ -28,13 +19,11 @@ let dispatchToProps = dispatch => ({
 let App = connect(stateToProps, dispatchToProps)(props => (
   <Grid>
     <Row>
-      <Col md={4}>
-        <ObjectSelect schema={props.schema} onSelect={props.onSelectObject} />
+      <Col md={3}>
+        <ObjectSelect objects={props.objects}
+                      onSelect={props.onSelectObject} />
       </Col>
-      <Col md={8}>
-        { props.selectedObjectType == 'table' ? (
-          <TableView table={props.selectedObject.toJS()} />
-        ) : null}
+      <Col md={9}>
       </Col>
     </Row>
   </Grid>

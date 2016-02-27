@@ -6,11 +6,11 @@ let ObjectSelect = props => {
   let tables = [];
 
   // Split objects into lists based on type
-  if(props.schema) {
-    for(let [name, obj] of props.schema.entries()) {
+  if(props.objects) {
+    for(let [key, obj] of props.objects.entries()) {
       switch(obj.get('type')) {
         case 'table':
-          tables.push(Object.assign({ name }, obj));
+          tables.push(Object.assign({ key }, obj.toJS()));
           break;
       }
     }
@@ -27,8 +27,9 @@ let ObjectSelect = props => {
     <h2>Tables</h2>
     <ListGroup>
     {tables.map(table => (
-      <ListGroupItem key={table.name} onClick={ () => { clicked(table.name) }}>
-        { table.name }
+      <ListGroupItem key={table.key}
+                     onClick={ () => { clicked(table.key) }}>
+        {table.name}
       </ListGroupItem>
     ))}
     </ListGroup>
@@ -36,9 +37,9 @@ let ObjectSelect = props => {
 };
 
 ObjectSelect.propTypes = {
-  schema: ImmutablePropTypes.mapOf(ImmutablePropTypes.mapContains({
+  objects: ImmutablePropTypes.mapOf(ImmutablePropTypes.mapContains({
+    name: React.PropTypes.string.isRequired,
     type: React.PropTypes.string.isRequired,
-    columns: ImmutablePropTypes.list,
   })),
   onSelect: React.PropTypes.func,
 };
