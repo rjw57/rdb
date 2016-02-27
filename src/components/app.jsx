@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { Input, Button } from 'react-bootstrap'
+import { Grid, Row, Col, Input, Button } from 'react-bootstrap'
 import ObjectSelect from './objectselect.jsx'
 import TableView from './tableview.jsx'
 
@@ -23,16 +23,18 @@ let dispatchToProps = dispatch => ({
 });
 
 let App = connect(stateToProps, dispatchToProps)(props => (
-  <div className="container">
-    <h2>SQL</h2>
-    <Input type="textarea" label="SQL"
-           placeholder="SELECT * FROM sqlite_master" />
-    <Button>Execute</Button>
-    { props.selectedObjectType == 'table' ? (
-      <TableView table={props.selectedObject.toJS()} />
-    ) : null}
-    <ObjectSelect objects={props.schema} onSelect={props.onSelectObject} />
-  </div>
+  <Grid>
+    <Row>
+      <Col md={4}>
+        <ObjectSelect objects={props.schema} onSelect={props.onSelectObject} />
+      </Col>
+      <Col md={8}>
+        { props.selectedObjectType == 'table' ? (
+          <TableView table={props.selectedObject.toJS()} />
+        ) : null}
+      </Col>
+    </Row>
+  </Grid>
 ))
 
 export default App;

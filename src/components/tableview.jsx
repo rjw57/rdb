@@ -5,7 +5,7 @@ let TableView = props => {
   let { name, sql, columns } = props.table;
 
   return (<section className="tableView">
-    <h3>{name}</h3>
+    <h2>{name}</h2>
     <Tabs defaultActiveKey={"cols"}>
       <Tab eventKey="cols" title="Columns">
         <Table>
