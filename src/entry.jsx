@@ -13,9 +13,7 @@ const store = configureStore();
 // Render the Application
 import React from 'react';
 import { render } from 'react-dom';
-
 import Root from './components/root.jsx';
-
 render(<Root store={store} />, containerElem);
 
 // HACK: fetch sample database

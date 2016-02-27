@@ -4,7 +4,7 @@
   "description": "Rich's Database",
   "main": "webpack.config.js",
   "scripts": {
-    "dev": "webpack-dev-server --devtool eval --progress --colors --hot --content-base build"
+    "dev": "webpack-dev-server --devtool eval --progress --colors --content-base build"
   },
   "author": "",
   "license": "MIT",
