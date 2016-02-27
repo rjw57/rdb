@@ -4,7 +4,7 @@
   "description": "Rich's Database",
   "main": "webpack.config.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "webpack-dev-server --devtool eval --progress --colors --hot --content-base build"
   },
   "author": "",
   "license": "MIT",
@@ -46,6 +46,7 @@
   "devDependencies": {
     "redux-devtools": "^3.1.1",
     "redux-devtools-dock-monitor": "^1.1.0",
-    "redux-devtools-log-monitor": "^1.0.4"
+    "redux-devtools-log-monitor": "^1.0.4",
+    "webpack-dev-server": "^1.14.1"
   }
 }
