@@ -43,8 +43,21 @@ export function updateTableInfo(database, name) { return dispatch => {
   });
 } }
 
+let setSelectedObjectName = createAction('SET_SELECTED_OBJECT_NAME');
+let queryObjectInfo = createAction('QUERY_OBJECT_INFO',
+  (database, name) => ({ database, name })
+);
+let setObjectInfo = createAction('SET_OBJECT_INFO',
+  (database, name, info) => ({ database, name, info })
+);
+
 // Select a SQLite object (table, view, etc) from the sqlite_master table for
 // manipulation. Only one object may be selected at a time. Pass an object name
 // of "null" to deselect all objects.
-export const selectObject = createAction('SELECT_OBJECT');
+export function selectObject(database, name) { return dispatch => {
+  dispatch(setSelectedObjectName(name));
+  dispatch(queryObjectInfo(database, name));
+  database.queryObjectInfo(name)
+    .then(info => dispatch(setObjectInfo(database, name, info)));
+} }
 

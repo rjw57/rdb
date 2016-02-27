@@ -35,12 +35,29 @@ let objects = handleActions({
   },
 }, initialObjects);
 
+const initialObjectInfoByName = Immutable.Map();
+let objectInfoByName = handleActions({
+  SET_DATABASE: () => initialObjectInfoByName,
+  QUERY_OBJECT_INFO: (state, action) => {
+    let { name } = action.payload;
+    state = state.delete(name);
+    return state;
+  },
+  SET_OBJECT_INFO: (state, action) => {
+    let { info, name } = action.payload;
+    state = state.set(name, Immutable.fromJS({
+      type: info.type, sql: info.sql,
+    }));
+    return state;
+  },
+}, initialObjectInfoByName);
+
 let selectedObjectName = handleActions({
   SELECT_OBJECT: (state, action) => action.payload
 }, null);
 
 const rootReducer = combineReducers({
-  database, objects, selectedObjectName
+  database, objects, objectInfoByName
 });
 
 export default rootReducer;

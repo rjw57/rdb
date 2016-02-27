@@ -42,6 +42,29 @@ class Database {
     });
     return columns;
   }
+
+  queryObjectInfo(name) {
+    return new Promise(resolve => resolve(this._syncQueryObjectInfo(name)));
+  }
+
+  _syncQueryObjectInfo(name) {
+    let masterTableEntry = null;
+    this._db.each(
+      'SELECT * FROM sqlite_master WHERE name = $name',
+      {$name: name},
+      row => { masterTableEntry = row; }
+    );
+
+    if(!masterTableEntry) { throw new Error('No object named "' + name + '"'); }
+
+    let { tbl_name, sql, type } = masterTableEntry;
+    let info = { tableName: tbl_name, sql, type };
+
+    switch(type) {
+    }
+
+    return info;
+  }
 }
 
 // Returns a promise resolved with a database initialised from the contents of
