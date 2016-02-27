@@ -23,3 +23,12 @@ export function fetchDatabase(uri) { return dispatch => {
     dispatch(changeDatabase(newDb))
   })
 } }
+
+export const SELECT_OBJECT = 'SELECT_OBJECT'
+
+// Select a SQLite object (table, view, etc) from the sqlite_master table for
+// manipulation. Only one object may be selected at a time. Pass an object name
+// of "null" to deselect all objects.
+export function selectObject(name) {
+  return { type: SELECT_OBJECT, name }
+}
