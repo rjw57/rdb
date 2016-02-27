@@ -10,14 +10,12 @@ document.body.appendChild(containerElem)
 import { applyMiddleware, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import promise from 'redux-promise';
-import createLogger from 'redux-logger';
 import DevTools from './components/devtools.jsx';
 
 import reducer from './reducers.js';
 
-const logger = createLogger();
 const finalCreateStore = compose(
-  applyMiddleware(thunk, promise, logger),
+  applyMiddleware(thunk, promise),
   DevTools.instrument()
 )(createStore);
 const store = finalCreateStore(reducer);
