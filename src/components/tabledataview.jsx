@@ -1,16 +1,16 @@
 import React from 'react'
 import { Table } from 'react-bootstrap';
 
-function queryData(database, name) {
-  return database._db.exec(
-    `SELECT * FROM [${name}] LIMIT 100`
-  )[0];
+function queryData(query, name) {
+  return query(`SELECT * FROM [${name}] LIMIT 100`);
 }
 
 class TableDataView extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { data: queryData(props.database, props.name) };
+    this.state = { data: null };
+    queryData(props.readOnlyQuery, props.name)
+      .then(data => this.setState({ data }));
   }
 
   render() {
@@ -33,18 +33,16 @@ class TableDataView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // database or table name changed?
-    if((nextProps.database !== this.props.database) ||
-        (nextProps.name !== this.props.name)) {
-      this.setState({
-        data: queryData(nextProps.database, nextProps.name)
-      });
+    // able name changed?
+    if(nextProps.name !== this.props.name) {
+      queryData(nextProps.readOnlyQuery, nextProps.name)
+        .then(data => this.setState({ data }));
     }
   }
 }
 
 TableDataView.propTypes = {
-  database: React.PropTypes.object.isRequired,
+  readOnlyQuery: React.PropTypes.func.isRequired,
   name: React.PropTypes.string.isRequired,
 };
 

@@ -15,6 +15,8 @@ let stateToProps = state => {
 
 let App = connect(stateToProps)(props => {
   let selectedObjectInfo = props.objectInfoByName.get(props.selectedObjectName);
+  let readOnlyQuery = props.database ?
+    (sql, params) => props.database.query(sql, params) : () => null;
 
   return (
     <Grid>
@@ -31,7 +33,8 @@ let App = connect(stateToProps)(props => {
           />
         </Col>
         <Col md={9}>
-          <ObjectView database={props.database} info={selectedObjectInfo} />
+          <ObjectView readOnlyQuery={readOnlyQuery}
+                      info={selectedObjectInfo} />
         </Col>
       </Row>
     </Grid>

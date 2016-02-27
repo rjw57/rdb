@@ -12,6 +12,25 @@ class Database {
     this._cachedMasterTable = null;
   }
 
+  // Returns a Promise which is resolved with an object of the following shape
+  // for a single query:
+  //
+  // { columns: Array<string>, values: Array<Array<Object>> }
+  query(sql, params) {
+    console.log('Database query:', sql, params);
+    return new Promise(resolve => {
+      let statement = this._db.prepare(sql, params);
+
+      let values = [], columns = null;
+      while(statement.step()) {
+        if(!columns) { columns = statement.getColumnNames(); }
+        values.push(statement.get());
+      }
+
+      resolve({ columns, values });
+    });
+  }
+
   // Return a Promise resolved with an array representation of the sqlite_master
   // table.
   queryMasterTable() {
@@ -21,6 +40,7 @@ class Database {
   _syncQueryMasterTable() {
     if(this._cachedMasterTable) { return this._cachedMasterTable; }
 
+    console.log('Database query master table');
     let masterTable = [];
     this._db.each('SELECT * FROM sqlite_master', row => {
       masterTable.push(row);
@@ -35,6 +55,7 @@ class Database {
   }
 
   _syncQueryObjectInfo(name) {
+    console.log('Database query object info:', name);
     let masterTableEntry = null;
     this._db.each(
       'SELECT * FROM sqlite_master WHERE name = $name',

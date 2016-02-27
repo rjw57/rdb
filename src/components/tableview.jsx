@@ -5,6 +5,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import TableDataView from './tabledataview.jsx';
 
 let TableView = props => {
+  let { readOnlyQuery } = props;
   let { name, sql, columns } = props.info.toJS();
 
   return (<section className="tableView">
@@ -30,14 +31,14 @@ let TableView = props => {
         <pre><code>{sql}</code></pre>
       </Tab>
       <Tab eventKey="data" title="Data">
-        <TableDataView name={name} database={props.database} />
+        <TableDataView name={name} readOnlyQuery={readOnlyQuery} />
       </Tab>
     </Tabs>
   </section>);
 };
 
 TableView.propTypes = {
-  database: React.PropTypes.object.isRequired,
+  readOnlyQuery: React.PropTypes.func.isRequired,
   info: ImmutablePropTypes.mapContains({
     name: React.PropTypes.string.isRequired,
     type: React.PropTypes.string.isRequired,
