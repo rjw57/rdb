@@ -1,10 +1,12 @@
-import React from 'react'
-import { connect } from 'react-redux'
+import React from 'react';
+import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Input, Button } from 'react-bootstrap'
-import ObjectSelect from './objectselect.jsx'
-import ObjectView from './objectview.jsx'
-import TableView from './tableview.jsx'
+import { Grid, Row, Col } from 'react-bootstrap';
+
+import ObjectSelect from './objectselect.jsx';
+import ObjectView from './objectview.jsx';
+import TableView from './tableview.jsx';
+import AdHocQuery from './adhocquery.jsx';
 
 import { selectObject, updateObjectInfo } from '../actions.js'
 
@@ -34,9 +36,7 @@ let App = connect(stateToProps)(props => {
         </Col>
         <Col md={9}>
           <h2>SQL</h2>
-          <Input type="textarea" />
-          <Button>Execute</Button>
-
+          <AdHocQuery query={readOnlyQuery} />
           <ObjectView readOnlyQuery={readOnlyQuery}
                       info={selectedObjectInfo} />
         </Col>
