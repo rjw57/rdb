@@ -1,5 +1,5 @@
 import { createAction } from 'redux-actions';
-import { databaseFromArrayBuffer } from './database.js';
+import { databaseFromArrayBuffer } from './database';
 
 let fetchDatabase = createAction('FETCH_DATABASE');
 let setDatabase = createAction('SET_DATABASE');

@@ -11,7 +11,7 @@ import AdHocQuery from './adhocquery.jsx';
 import {
   selectObject, updateObjectInfo, openDatabaseFromArrayBuffer,
   reloadSchema
-} from '../actions.js'
+} from '../actions';
 
 let IoPane = props => (
   <div>
