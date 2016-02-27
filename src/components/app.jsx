@@ -9,7 +9,8 @@ import TableView from './tableview.jsx';
 import AdHocQuery from './adhocquery.jsx';
 
 import {
-  selectObject, updateObjectInfo, openDatabaseFromArrayBuffer
+  selectObject, updateObjectInfo, openDatabaseFromArrayBuffer,
+  reloadSchema
 } from '../actions.js'
 
 let IoPane = props => (
@@ -29,6 +30,14 @@ let App = connect(stateToProps)(props => {
   let selectedObjectInfo = props.objectInfoByName.get(props.selectedObjectName);
   let readOnlyQuery = props.database ?
     (sql, params) => props.database.query(sql, params) : () => null;
+  let query = (sql, params) => {
+    if(!props.database) { return; }
+    return readOnlyQuery(sql, params)
+      .then(result => {
+        props.dispatch(reloadSchema(props.database));
+        return result;
+      });
+  };
 
   let save = () => {
     console.log('save');
@@ -67,7 +76,7 @@ let App = connect(stateToProps)(props => {
         </Tab>
         <Tab eventKey={2} title="Query">
           <h2>SQL</h2>
-          <AdHocQuery query={readOnlyQuery} />
+          <AdHocQuery query={query} />
         </Tab>
         <Tab eventKey={3} title="IO">
           <IoPane onSave={save} onInput={openFile} />

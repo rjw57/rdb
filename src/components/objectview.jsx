@@ -8,6 +8,7 @@ let ObjectView = props => {
   let type = props.info.get('type');
   switch(type) {
     case 'table':
+    case 'view':
       return <TableView {...props} />
     default:
       return <div>Unknown type { type }</div>;

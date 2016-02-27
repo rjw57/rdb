@@ -9,7 +9,6 @@ class Database {
   constructor(db = new sql.Database()) {
     if(!db) { throw new Error('No database passed'); }
     this._db = db;
-    this._cachedMasterTable = null;
   }
 
   // Returns a Promise which is resolved with an object of the following shape
@@ -38,16 +37,12 @@ class Database {
   }
 
   _syncQueryMasterTable() {
-    if(this._cachedMasterTable) { return this._cachedMasterTable; }
-
     console.log('Database query master table');
     let masterTable = [];
     this._db.each('SELECT * FROM sqlite_master', row => {
       masterTable.push(row);
     });
-
-    this._cachedMasterTable = masterTable;
-    return this._cachedMasterTable;
+    return masterTable;
   }
 
   queryObjectInfo(name) {
@@ -70,6 +65,7 @@ class Database {
 
     switch(type) {
       case 'table':
+      case 'view':
         let columns = [];
         this._db.each(
           `PRAGMA table_info(${ unsafeSqlQuoteString(name) })`,

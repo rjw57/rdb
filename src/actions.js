@@ -18,17 +18,19 @@ export function fetchDatabase(uri) { return dispatch => {
     .then(body => dispatch(openDatabaseFromArrayBuffer(body)));
 } }
 
+export function reloadSchema(database) { return dispatch => {
+  dispatch(queryMasterTable(database));
+  database.queryMasterTable()
+    .then(masterTable => dispatch(setMasterTable(database, masterTable)));
+} }
+
 // Open a new database from an ArrayBuffer
 export function openDatabaseFromArrayBuffer(buffer) { return dispatch => {
-  let fetchedDb = null;
   databaseFromArrayBuffer(buffer)
     .then(db => {
       dispatch(setDatabase(db));
-      dispatch(queryMasterTable(db));
-      fetchedDb = db;
-      return db.queryMasterTable();
-    })
-    .then(masterTable => dispatch(setMasterTable(fetchedDb, masterTable)));
+      dispatch(reloadSchema(db));
+    });
 } }
 
 export const selectObject = createAction('SELECT_OBJECT');
