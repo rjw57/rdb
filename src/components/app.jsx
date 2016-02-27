@@ -33,6 +33,10 @@ let App = connect(stateToProps)(props => {
           />
         </Col>
         <Col md={9}>
+          <h2>SQL</h2>
+          <Input type="textarea" />
+          <Button>Execute</Button>
+
           <ObjectView readOnlyQuery={readOnlyQuery}
                       info={selectedObjectInfo} />
         </Col>
