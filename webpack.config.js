@@ -66,6 +66,6 @@ module.exports = {
     aggregateTimeout: 300,
     poll: 1000,
   },
-  devtool: 'source-map',
+  devtool: !isProduction ? 'source-map' : null,
   plugins: plugins,
 }
