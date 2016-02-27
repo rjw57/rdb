@@ -28,10 +28,6 @@ class Database {
     this._cachedSchema = null;
   }
 
-  static fromArrayBuffer(arrayBuffer) {
-    return new Database(new sql.Database(new Uint8Array(arrayBuffer)));
-  }
-
   // Return an Immutable.js representation of the schema. See above.
   fetchSchema() {
     // Return the cached schema if it exists
@@ -75,4 +71,10 @@ class Database {
   }
 }
 
-export default Database;
+// Returns a promise resolved with a database initialised from the contents of
+// the passed array buffer
+export function databaseFromArrayBuffer(arrayBuffer) {
+  return new Promise((resolve, reject) => (
+    resolve(new Database(new sql.Database(new Uint8Array(arrayBuffer))))
+  ));
+}

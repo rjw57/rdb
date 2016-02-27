@@ -1,17 +1,18 @@
 import { createAction } from 'redux-actions';
-import Database from './database.js';
+import { databaseFromArrayBuffer } from './database.js';
 
 let requestDatabase = createAction('REQUEST_DATABASE');
 let changeDatabase = createAction('CHANGE_DATABASE');
 
 // Fetch a new SQLite database from an URI
 export function fetchDatabase(uri) { return dispatch => {
-  dispatch(requestDatabase(uri))
+  dispatch(requestDatabase(uri));
 
   // TODO: Error handling
   fetch(uri)
     .then(response => response.arrayBuffer())
-    .then(body => dispatch(changeDatabase(Database.fromArrayBuffer(body))));
+    .then(body => databaseFromArrayBuffer(body))
+    .then(db => dispatch(changeDatabase(db)));
 } }
 
 // Select a SQLite object (table, view, etc) from the sqlite_master table for
