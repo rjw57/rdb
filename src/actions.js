@@ -26,36 +26,19 @@ export function fetchDatabase(uri) { return dispatch => {
     .then(masterTable => dispatch(setMasterTable(fetchedDb, masterTable)));
 } }
 
-let queryTableInfo = createAction(
-  'QUERY_TABLE_INFO', (database, name) => ({ database, name })
-);
+export const selectObject = createAction('SELECT_OBJECT');
 
-let setTableInfo = createAction(
-  'SET_TABLE_INFO',
-  (database, name, columns) => ({ database, name, columns })
-);
-
-// Update information on a Database table
-export function updateTableInfo(database, name) { return dispatch => {
-  dispatch(queryTableInfo(database, name));
-  database.queryTableInfo(name).then(columns => {
-    dispatch(setTableInfo(database, name, columns));
-  });
-} }
-
-let setSelectedObjectName = createAction('SET_SELECTED_OBJECT_NAME');
 let queryObjectInfo = createAction('QUERY_OBJECT_INFO',
   (database, name) => ({ database, name })
 );
+
 let setObjectInfo = createAction('SET_OBJECT_INFO',
   (database, name, info) => ({ database, name, info })
 );
 
-// Select a SQLite object (table, view, etc) from the sqlite_master table for
-// manipulation. Only one object may be selected at a time. Pass an object name
-// of "null" to deselect all objects.
-export function selectObject(database, name) { return dispatch => {
-  dispatch(setSelectedObjectName(name));
+// Update information on a SQLite object (table, view, etc) from the
+// sqlite_master table for manipulation.
+export function updateObjectInfo(database, name) { return dispatch => {
   dispatch(queryObjectInfo(database, name));
   database.queryObjectInfo(name)
     .then(info => dispatch(setObjectInfo(database, name, info)));

@@ -8,26 +8,22 @@ let database = handleActions({
   FETCH_DATABASE: (state, action) => initialDatabase,
 }, initialDatabase);
 
-// Immutable Map of keys to database objects. Each database "object" is
+// Immutable List database objects. Each database "object" is
 // represented via an Immutable JavaScript map with the following shape:
 //
 //    { name: <string>, type: <string>, tableName: <string> }
 //
 // where type is one of table, view, index or trigger.
-const initialObjects = Immutable.Map();
+const initialObjects = Immutable.List();
 let objects = handleActions({
   QUERY_MASTER_TABLE: (state, action) => initialObjects,
   SET_MASTER_TABLE: (state, action) => {
     let { masterTable } = action.payload;
     if(!masterTable) { return state; }
 
-    let newObjects = {};
-    masterTable.forEach(row => {
+    let newObjects = masterTable.map(row => {
       let { name, type, tbl_name, sql } = row;
-      let key = 'obj_' + name;
-      newObjects[key] = {
-        name, type, tableName: tbl_name, sql
-      };
+      return { name, type, tableName: tbl_name, sql };
     });
 
     state = Immutable.fromJS(newObjects);
@@ -45,9 +41,7 @@ let objectInfoByName = handleActions({
   },
   SET_OBJECT_INFO: (state, action) => {
     let { info, name } = action.payload;
-    state = state.set(name, Immutable.fromJS({
-      type: info.type, sql: info.sql,
-    }));
+    state = state.set(name, Immutable.fromJS(info));
     return state;
   },
 }, initialObjectInfoByName);
@@ -57,7 +51,7 @@ let selectedObjectName = handleActions({
 }, null);
 
 const rootReducer = combineReducers({
-  database, objects, objectInfoByName
+  database, objects, objectInfoByName, selectedObjectName
 });
 
 export default rootReducer;

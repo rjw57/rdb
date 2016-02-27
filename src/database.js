@@ -30,19 +30,6 @@ class Database {
     return this._cachedMasterTable;
   }
 
-  // Return a Promise resolved with an array of columns for the named table.
-  queryTableInfo(name) {
-    return new Promise(resolve => resolve(this._syncQueryTableInfo(name)));
-  }
-
-  _syncQueryTableInfo(name) {
-    let columns = [];
-    this._db.each(`PRAGMA table_info(${ unsafeSqlQuoteString(name) })`, row => {
-      columns.push(row);
-    });
-    return columns;
-  }
-
   queryObjectInfo(name) {
     return new Promise(resolve => resolve(this._syncQueryObjectInfo(name)));
   }
@@ -58,9 +45,17 @@ class Database {
     if(!masterTableEntry) { throw new Error('No object named "' + name + '"'); }
 
     let { tbl_name, sql, type } = masterTableEntry;
-    let info = { tableName: tbl_name, sql, type };
+    let info = { name, tableName: tbl_name, sql, type };
 
     switch(type) {
+      case 'table':
+        let columns = [];
+        this._db.each(
+          `PRAGMA table_info(${ unsafeSqlQuoteString(name) })`,
+          row => columns.push(row)
+        );
+        info.columns = columns;
+        break;
     }
 
     return info;

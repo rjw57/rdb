@@ -3,33 +3,39 @@ import { connect } from 'react-redux'
 
 import { Grid, Row, Col, Input, Button } from 'react-bootstrap'
 import ObjectSelect from './objectselect.jsx'
+import ObjectView from './objectview.jsx'
 import TableView from './tableview.jsx'
 
-import { selectObject } from '../actions.js'
+import { selectObject, updateObjectInfo } from '../actions.js'
 
 let stateToProps = state => {
-  let { database, objects } = state;
-  return { database, objects };
+  let { database, objects, objectInfoByName, selectedObjectName } = state;
+  return { database, objects, objectInfoByName, selectedObjectName };
 };
 
-let dispatchToProps = (dispatch, props) => ({
-  onSelectObject(db, object) { dispatch(selectObject(db, object.get('name'))); }
-});
+let App = connect(stateToProps)(props => {
+  let selectedObjectInfo = props.objectInfoByName.get(props.selectedObjectName);
 
-let App = connect(stateToProps, dispatchToProps)(props => (
-  <Grid>
-    <Row>
-      <Col md={3}>
-        <ObjectSelect
+  return (
+    <Grid>
+      <Row>
+        <Col md={3}>
+          <ObjectSelect
             objects={props.objects}
-            onSelect={key => props.onSelectObject(props.database,
-                                                  props.objects.get(key))}
-            />
-      </Col>
-      <Col md={9}>
-      </Col>
-    </Row>
-  </Grid>
-))
+            onSelect={name => {
+              props.dispatch(selectObject(name))
+              if(!props.objectInfoByName.get(name)) {
+                props.dispatch(updateObjectInfo(props.database, name));
+              }
+            }}
+          />
+        </Col>
+        <Col md={9}>
+          <ObjectView database={props.database} info={selectedObjectInfo} />
+        </Col>
+      </Row>
+    </Grid>
+  );
+});
 
 export default App;

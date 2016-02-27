@@ -1,8 +1,11 @@
 import React from 'react'
 import { Tabs, Tab, Table } from 'react-bootstrap'
+import ImmutablePropTypes from 'react-immutable-proptypes';
+
+import TableDataView from './tabledataview.jsx';
 
 let TableView = props => {
-  let { name, sql, columns } = props.table;
+  let { name, sql, columns } = props.info.toJS();
 
   return (<section className="tableView">
     <h2>{name}</h2>
@@ -14,8 +17,8 @@ let TableView = props => {
           </thead>
           <tbody>
           {columns.map(col => (
-            <tr key={col.columnId}>
-              <td>{col.columnId}</td>
+            <tr key={col.cid}>
+              <td>{col.cid}</td>
               <td>{col.name}</td>
               <td>{col.type}</td>
             </tr>
@@ -26,21 +29,26 @@ let TableView = props => {
       <Tab eventKey="sql" title="SQL">
         <pre><code>{sql}</code></pre>
       </Tab>
+      <Tab eventKey="data" title="Data">
+        <TableDataView name={name} database={props.database} />
+      </Tab>
     </Tabs>
   </section>);
-}
+};
 
 TableView.propTypes = {
-  table: React.PropTypes.shape({
+  database: React.PropTypes.object.isRequired,
+  info: ImmutablePropTypes.mapContains({
     name: React.PropTypes.string.isRequired,
+    type: React.PropTypes.string.isRequired,
     sql: React.PropTypes.string.isRequired,
-    columns: React.PropTypes.arrayOf(React.PropTypes.shape({
-      columnId: React.PropTypes.number.isRequired,
+    columns: ImmutablePropTypes.listOf(ImmutablePropTypes.mapContains({
+      cid: React.PropTypes.number.isRequired,
       name: React.PropTypes.string.isRequired,
       type: React.PropTypes.string.isRequired,
-      notNull: React.PropTypes.bool.isRequired,
-      isPrimaryKey: React.PropTypes.bool.isRequired,
-      defaultValue: React.PropTypes.object,
+      notnull: React.PropTypes.number.isRequired,
+      pk: React.PropTypes.number.isRequired,
+      dflt_value: React.PropTypes.object,
     })).isRequired,
   }),
 }
