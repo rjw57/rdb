@@ -10,13 +10,18 @@ let setMasterTable = createAction('SET_MASTER_TABLE',
 
 // Fetch a new SQLite database from an URI
 export function fetchDatabase(uri) { return dispatch => {
-  let fetchedDb = null;
   dispatch(fetchDatabase(uri));
 
   // TODO: Error handling
   fetch(uri)
     .then(response => response.arrayBuffer())
-    .then(body => databaseFromArrayBuffer(body))
+    .then(body => dispatch(openDatabaseFromArrayBuffer(body)));
+} }
+
+// Open a new database from an ArrayBuffer
+export function openDatabaseFromArrayBuffer(buffer) { return dispatch => {
+  let fetchedDb = null;
+  databaseFromArrayBuffer(buffer)
     .then(db => {
       dispatch(setDatabase(db));
       dispatch(queryMasterTable(db));

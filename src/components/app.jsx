@@ -1,14 +1,24 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Tabs, Tab, Button, Grid, Row, Col, Input } from 'react-bootstrap';
 
 import ObjectSelect from './objectselect.jsx';
 import ObjectView from './objectview.jsx';
 import TableView from './tableview.jsx';
 import AdHocQuery from './adhocquery.jsx';
 
-import { selectObject, updateObjectInfo } from '../actions.js'
+import {
+  selectObject, updateObjectInfo, openDatabaseFromArrayBuffer
+} from '../actions.js'
+
+let IoPane = props => (
+  <div>
+    <Input label="Upload" type="file"
+           onChange={e => props.onInput(e.target.files[0])} />
+    <Button onClick={props.onSave}>Save</Button>
+  </div>
+);
 
 let stateToProps = state => {
   let { database, objects, objectInfoByName, selectedObjectName } = state;
@@ -20,27 +30,49 @@ let App = connect(stateToProps)(props => {
   let readOnlyQuery = props.database ?
     (sql, params) => props.database.query(sql, params) : () => null;
 
+  let save = () => {
+    console.log('save');
+  }
+
+  let openFile = file => {
+    let reader = new FileReader();
+    reader.onload = () =>
+      props.dispatch(openDatabaseFromArrayBuffer(reader.result));
+    reader.readAsArrayBuffer(file);
+  }
+
   return (
     <Grid>
-      <Row>
-        <Col md={3}>
-          <ObjectSelect
-            objects={props.objects}
-            onSelect={name => {
-              props.dispatch(selectObject(name))
-              if(!props.objectInfoByName.get(name)) {
-                props.dispatch(updateObjectInfo(props.database, name));
-              }
-            }}
-          />
-        </Col>
-        <Col md={9}>
+      <Tabs defaultActiveKey={1} animation={false}>
+        <Tab eventKey={1} title="Schema">
+          <Grid>
+            <Row>
+              <Col md={3}>
+                <ObjectSelect
+                  objects={props.objects}
+                  onSelect={name => {
+                    props.dispatch(selectObject(name))
+                    if(!props.objectInfoByName.get(name)) {
+                      props.dispatch(updateObjectInfo(props.database, name));
+                    }
+                  }}
+                />
+              </Col>
+              <Col md={9}>
+                <ObjectView readOnlyQuery={readOnlyQuery}
+                            info={selectedObjectInfo} />
+              </Col>
+            </Row>
+          </Grid>
+        </Tab>
+        <Tab eventKey={2} title="Query">
           <h2>SQL</h2>
           <AdHocQuery query={readOnlyQuery} />
-          <ObjectView readOnlyQuery={readOnlyQuery}
-                      info={selectedObjectInfo} />
-        </Col>
-      </Row>
+        </Tab>
+        <Tab eventKey={3} title="IO">
+          <IoPane onSave={save} onInput={openFile} />
+        </Tab>
+      </Tabs>
     </Grid>
   );
 });
