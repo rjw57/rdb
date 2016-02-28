@@ -8,24 +8,35 @@ let databaseURIRequest = createAction('DATABASE_URI_REQUEST');
 // Set the current database to a Database instance.
 let setDatabase = createAction('SET_DATABASE');
 
+// Allow the user to save the passed database.
+export const saveDatabase = createAction('SAVE_DATABASE');
+
 // Fetch a new SQLite database from an URI
-export function databaseFromURI(uri) { return dispatch => {
+export function setDatabaseFromURI(uri) { return dispatch => {
   dispatch(databaseURIRequest(uri));
 
   // TODO: Error handling?
   fetch(uri)
     .then(response => response.arrayBuffer())
-    .then(body => dispatch(databaseFromArrayBuffer(body)));
+    .then(body => dispatch(setDatabaseFromArrayBuffer(body)));
 } }
 
 // Open a new database from an ArrayBuffer
-import { databaseFromArrayBuffer as _dbFromAB } from './database';
-export function databaseFromArrayBuffer(buffer) { return dispatch => {
-  _dbFromAB(buffer)
+import { databaseFromArrayBuffer } from './database';
+export function setDatabaseFromArrayBuffer(buffer) { return dispatch => {
+  databaseFromArrayBuffer(buffer)
     .then(db => {
       dispatch(setDatabase(db));
       dispatch(queryMasterTable(db));
     });
+} }
+
+// Open a new database from a Input element File object
+export function setDatabaseFromFile(file) { return dispatch => {
+  let reader = new FileReader();
+  reader.onload = () =>
+    dispatch(setDatabaseFromArrayBuffer(reader.result));
+  reader.readAsArrayBuffer(file);
 } }
 
 //// SCHEMA ////

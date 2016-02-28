@@ -5,6 +5,19 @@ import { handleActions } from 'redux-actions';
 const initialDatabase = null;
 let database = handleActions({
   SET_DATABASE: (state, action) => action.payload,
+  SAVE_DATABASE: (state, action) => {
+    let database = action.payload;
+    database.export().then(buffer => {
+      let blob = new Blob([buffer], {type: 'octet/stream'});
+      let url = window.URL.createObjectURL(blob);
+      let a = document.createElement('a');
+      a.href = url;
+      a.download = 'database.sqlite';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+    return state;
+  },
 }, initialDatabase);
 
 // The object mapping holds all the information on a particular mapping used by

@@ -9,7 +9,11 @@ import TableView from './tableview.jsx';
 import AdHocQuery from './adhocquery.jsx';
 
 import {
-  selectObject, queryObjectInfo, databaseFromArrayBuffer, queryMasterTable
+  setDatabaseFromFile,
+  saveDatabase,
+  queryMasterTable,
+  queryObjectInfo,
+  selectObject
 } from '../actions';
 
 let IoPane = props => (
@@ -19,18 +23,6 @@ let IoPane = props => (
     <Button onClick={props.onSave}>Save</Button>
   </div>
 );
-
-function saveDatabase(database) {
-  database.export().then(buffer => {
-    let blob = new Blob([buffer], {type: 'octet/stream'});
-    let url = window.URL.createObjectURL(blob);
-    let a = document.createElement('a');
-    a.href = url;
-    a.download = 'database.sqlite';
-    a.click();
-    window.URL.revokeObjectURL(url);
-  });
-}
 
 let stateToProps = state => {
   let { database, objectsByName, selectedObjectName } = state;
@@ -43,13 +35,6 @@ let stateToProps = state => {
 
 let App = connect(stateToProps)(props => {
   let { database, dispatch, selectedObject, objectsByName } = props;
-
-  function openFile(file) {
-    let reader = new FileReader();
-    reader.onload = () =>
-      dispatch(databaseFromArrayBuffer(reader.result));
-    reader.readAsArrayBuffer(file);
-  }
 
   function readOnlyQuery(sql, params) {
     return database.query(sql, params);
@@ -105,8 +90,8 @@ let App = connect(stateToProps)(props => {
         </Tab>
         <Tab eventKey={3} title="IO">
           <IoPane
-            onSave={() => saveDatabase(props.database)}
-            onInput={openFile}
+            onSave={() => dispatch(saveDatabase(database))}
+            onInput={file => dispatch(setDatabaseFromFile(file))}
           />
         </Tab>
       </Tabs>

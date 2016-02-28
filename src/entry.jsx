@@ -17,5 +17,5 @@ import Root from './components/root.jsx';
 render(<Root store={store} />, containerElem);
 
 // HACK: fetch sample database
-import { databaseFromURI } from './actions';
-store.dispatch(databaseFromURI('sampledb.sqlite'));
+import { setDatabaseFromURI } from './actions';
+store.dispatch(setDatabaseFromURI('sampledb.sqlite'));
