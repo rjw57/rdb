@@ -8,8 +8,8 @@ let databaseURIRequest = createAction('DATABASE_URI_REQUEST');
 // Set the current database to a Database instance.
 let setDatabase = createAction('SET_DATABASE');
 
-// Allow the user to save the passed database.
-export const saveDatabase = createAction('SAVE_DATABASE');
+// Export the database to the user's filesystem
+export const exportDatabase = createAction('SAVE_DATABASE');
 
 // Fetch a new SQLite database from an URI
 export function setDatabaseFromURI(uri) { return dispatch => {

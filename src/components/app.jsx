@@ -10,7 +10,7 @@ import AdHocQuery from './adhocquery.jsx';
 
 import {
   setDatabaseFromFile,
-  saveDatabase,
+  exportDatabase,
   queryMasterTable,
   queryObjectInfo,
   selectObject
@@ -90,7 +90,7 @@ let App = connect(stateToProps)(props => {
         </Tab>
         <Tab eventKey={3} title="IO">
           <IoPane
-            onSave={() => dispatch(saveDatabase(database))}
+            onSave={() => dispatch(exportDatabase(database))}
             onInput={file => dispatch(setDatabaseFromFile(file))}
           />
         </Tab>
