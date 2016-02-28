@@ -9,8 +9,7 @@ import TableView from './tableview.jsx';
 import AdHocQuery from './adhocquery.jsx';
 
 import {
-  selectObject, updateObjectInfo, openDatabaseFromArrayBuffer,
-  reloadSchema
+  selectObject, queryObjectInfo, databaseFromArrayBuffer, queryMasterTable
 } from '../actions';
 
 let IoPane = props => (
@@ -34,7 +33,7 @@ let App = connect(stateToProps)(props => {
     if(!props.database) { return; }
     return readOnlyQuery(sql, params)
       .then(result => {
-        props.dispatch(reloadSchema(props.database));
+        props.dispatch(queryMasterTable(props.database));
         return result;
       });
   };
@@ -55,14 +54,14 @@ let App = connect(stateToProps)(props => {
   let openFile = file => {
     let reader = new FileReader();
     reader.onload = () =>
-      props.dispatch(openDatabaseFromArrayBuffer(reader.result));
+      props.dispatch(databaseFromArrayBuffer(reader.result));
     reader.readAsArrayBuffer(file);
   }
 
   let handleSelectObject = name => {
     props.dispatch(selectObject(name))
     if(!props.objectInfoByName.get(name)) {
-      props.dispatch(updateObjectInfo(props.database, name));
+      props.dispatch(queryObjectInfo(props.database, name));
     }
   };
 
