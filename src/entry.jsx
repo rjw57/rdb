@@ -10,6 +10,18 @@ document.body.appendChild(containerElem)
 import configureStore from './configurestore';
 const store = configureStore();
 
+// Implement the actor pattern.
+import actors from './actors';
+let acting = false;
+store.subscribe(function() {
+  if(acting) { return; }
+  acting = true;
+  for (let actor of actors) {
+    actor(store.getState(), store.dispatch);
+  }
+  acting = false;
+});
+
 // Render the Application
 import React from 'react';
 import { render } from 'react-dom';

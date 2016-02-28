@@ -12,7 +12,6 @@ import {
   setDatabaseFromFile,
   exportDatabase,
   queryMasterTable,
-  queryObjectInfo,
   selectObject
 } from '../actions';
 
@@ -45,25 +44,6 @@ let App = connect(stateToProps)(props => {
       });
   }
 
-  function handleSelectObject(name) {
-    dispatch(selectObject(name));
-
-    let object = objectsByName.get(name);
-    if(!object) { return; }
-
-    // If the selected object does not yet have the required info, kick off a
-    // request.
-    switch(object.get('type')) {
-      case 'table':
-      case 'view':
-        if(!object.get('columns') &&
-            !object.get('isQueryingColumns')) {
-          dispatch(queryObjectInfo(database, name));
-        }
-        break;
-    }
-  }
-
   return (
     <Grid>
       <Tabs defaultActiveKey={1} animation={false}>
@@ -72,7 +52,8 @@ let App = connect(stateToProps)(props => {
             <Row>
               <Col md={3}>
                 <ObjectSelect
-                  objects={props.objectsByName} onSelect={handleSelectObject} />
+                  objects={props.objectsByName}
+                  onSelect={name => dispatch(selectObject(name))} />
               </Col>
               <Col md={9}>
                 <ObjectView
