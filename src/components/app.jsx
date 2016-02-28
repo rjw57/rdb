@@ -26,10 +26,7 @@ let IoPane = props => (
 
 let stateToProps = state => {
   let { database, objectsByName, selectedObjectName } = state;
-  let selectedObject = null;
-  if(selectedObjectName) {
-    selectedObject = objectsByName.get(selectedObjectName);
-  }
+  let selectedObject = objectsByName.get(selectedObjectName);
   return { database, objectsByName, selectedObject };
 };
 
