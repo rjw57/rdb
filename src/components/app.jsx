@@ -20,50 +20,67 @@ let IoPane = props => (
   </div>
 );
 
+function saveDatabase(database) {
+  database.export().then(buffer => {
+    let blob = new Blob([buffer], {type: 'octet/stream'});
+    let url = window.URL.createObjectURL(blob);
+    let a = document.createElement('a');
+    a.href = url;
+    a.download = 'database.sqlite';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  });
+}
+
 let stateToProps = state => {
-  let { database, objects, objectInfoByName, selectedObjectName } = state;
-  return { database, objects, objectInfoByName, selectedObjectName };
+  let { database, objectsByName, selectedObjectName } = state;
+  let selectedObject = null;
+  if(selectedObjectName) {
+    selectedObject = objectsByName.get(selectedObjectName);
+  }
+  return { database, objectsByName, selectedObject };
 };
 
 let App = connect(stateToProps)(props => {
-  let selectedObjectInfo = props.objectInfoByName.get(props.selectedObjectName);
-  let readOnlyQuery = props.database ?
-    (sql, params) => props.database.query(sql, params) : () => null;
-  let query = (sql, params) => {
-    if(!props.database) { return; }
+  let { database, dispatch, selectedObject, objectsByName } = props;
+
+  function openFile(file) {
+    let reader = new FileReader();
+    reader.onload = () =>
+      dispatch(databaseFromArrayBuffer(reader.result));
+    reader.readAsArrayBuffer(file);
+  }
+
+  function readOnlyQuery(sql, params) {
+    return database.query(sql, params);
+  }
+
+  function query(sql, params) {
     return readOnlyQuery(sql, params)
       .then(result => {
         props.dispatch(queryMasterTable(props.database));
         return result;
       });
-  };
-
-  let save = () => {
-    if(!props.database) { return; }
-    props.database.export().then(buffer => {
-      let blob = new Blob([buffer], {type: 'octet/stream'});
-      let url = window.URL.createObjectURL(blob);
-      let a = document.createElement('a');
-      a.href = url;
-      a.download = 'database.sqlite';
-      a.click();
-      window.URL.revokeObjectURL(url);
-    });
   }
 
-  let openFile = file => {
-    let reader = new FileReader();
-    reader.onload = () =>
-      props.dispatch(databaseFromArrayBuffer(reader.result));
-    reader.readAsArrayBuffer(file);
-  }
+  function handleSelectObject(name) {
+    dispatch(selectObject(name));
 
-  let handleSelectObject = name => {
-    props.dispatch(selectObject(name))
-    if(!props.objectInfoByName.get(name)) {
-      props.dispatch(queryObjectInfo(props.database, name));
+    let object = objectsByName.get(name);
+    if(!object) { return; }
+
+    // If the selected object does not yet have the required info, kick off a
+    // request.
+    switch(object.get('type')) {
+      case 'table':
+      case 'view':
+        if(!object.get('columns') &&
+            !object.get('isQueryingColumns')) {
+          dispatch(queryObjectInfo(database, name));
+        }
+        break;
     }
-  };
+  }
 
   return (
     <Grid>
@@ -73,11 +90,11 @@ let App = connect(stateToProps)(props => {
             <Row>
               <Col md={3}>
                 <ObjectSelect
-                  objects={props.objects} onSelect={handleSelectObject} />
+                  objects={props.objectsByName} onSelect={handleSelectObject} />
               </Col>
               <Col md={9}>
                 <ObjectView
-                  readOnlyQuery={readOnlyQuery} info={selectedObjectInfo} />
+                  readOnlyQuery={readOnlyQuery} info={selectedObject} />
               </Col>
             </Row>
           </Grid>
@@ -87,7 +104,10 @@ let App = connect(stateToProps)(props => {
           <AdHocQuery query={query} />
         </Tab>
         <Tab eventKey={3} title="IO">
-          <IoPane onSave={save} onInput={openFile} />
+          <IoPane
+            onSave={() => saveDatabase(props.database)}
+            onInput={openFile}
+          />
         </Tab>
       </Tabs>
     </Grid>

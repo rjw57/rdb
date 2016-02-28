@@ -6,26 +6,36 @@ import TableDataView from './tabledataview.jsx';
 
 let TableView = props => {
   let { readOnlyQuery } = props;
-  let { name, sql, columns } = props.info.toJS();
+  let { isQueryingColumns, name, sql, columns } = props.info.toJS();
+
+  let columnTable = null;
+
+  if(isQueryingColumns) {
+    columnTable = <div>Querying&hellip;</div>;
+  } else if(columns) {
+    columnTable = (
+      <Table>
+        <thead>
+          <tr><th>#</th><th>Name</th><th>Type</th></tr>
+        </thead>
+        <tbody>
+        {columns.map(col => (
+          <tr key={col.cid}>
+            <td>{col.cid}</td>
+            <td>{col.name}</td>
+            <td>{col.type}</td>
+          </tr>
+        ))}
+        </tbody>
+      </Table>
+    );
+  }
 
   return (<section className="tableView">
     <h2>{name}</h2>
     <Tabs defaultActiveKey={"cols"}>
       <Tab eventKey="cols" title="Columns">
-        <Table>
-          <thead>
-            <tr><th>#</th><th>Name</th><th>Type</th></tr>
-          </thead>
-          <tbody>
-          {columns.map(col => (
-            <tr key={col.cid}>
-              <td>{col.cid}</td>
-              <td>{col.name}</td>
-              <td>{col.type}</td>
-            </tr>
-          ))}
-          </tbody>
-        </Table>
+        { columnTable }
       </Tab>
       <Tab eventKey="sql" title="SQL">
         <pre><code>{sql}</code></pre>
@@ -50,7 +60,7 @@ TableView.propTypes = {
       notnull: React.PropTypes.number.isRequired,
       pk: React.PropTypes.number.isRequired,
       dflt_value: React.PropTypes.object,
-    })).isRequired,
+    })),
   }),
 }
 
