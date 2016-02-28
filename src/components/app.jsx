@@ -5,7 +5,6 @@ import { Tabs, Tab, Button, Grid, Row, Col, Input } from 'react-bootstrap';
 
 import ObjectSelect from './objectselect.jsx';
 import ObjectView from './objectview.jsx';
-import TableView from './tableview.jsx';
 import AdHocQuery from './adhocquery.jsx';
 
 import {
