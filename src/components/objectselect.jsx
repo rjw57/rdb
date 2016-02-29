@@ -47,7 +47,7 @@ let ObjectSelect = props => {
 };
 
 ObjectSelect.propTypes = {
-  objects: ImmutablePropTypes.mapOf(ImmutablePropTypes.mapContains({
+  objects: ImmutablePropTypes.mapOf(ImmutablePropTypes.contains({
     name: React.PropTypes.string.isRequired,
     type: React.PropTypes.string.isRequired,
   })),

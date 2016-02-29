@@ -12,8 +12,8 @@ function selectedObjectInfo(state, dispatch) {
   switch(object.get('type')) {
     case 'table':
     case 'view':
-      if(!object.get('columns') &&
-          !object.get('isQueryingColumns')) {
+      let columns = object.get('columns').toJS();
+      if(columns && !columns.isQueryingColumns && !columns.columnList) {
         dispatch(queryObjectInfo(database, selectedObjectName));
       }
       break;

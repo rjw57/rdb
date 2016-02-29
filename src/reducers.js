@@ -36,18 +36,15 @@ let database = handleActions({
 // The additional properties are type dependent. For tables and views:
 //
 //  {
-//    isQueryingColumns: <bool>,
-//    columns: Array<Column>?,
-//    page: { offset: Number, limit: Number },
-//    isQueryingValues: <bool>,
-//    values: Array<Array<Object>>,
+//    columns: {
+//      isQuerying: <bool>,
+//      columnList: List<Column> | null,
+//    },
 //  }
 
 const initialObjectsByName = Immutable.Map();
-const initialViewAndTable = Immutable.Map({
-  isQueryingColumns: false, columns: null,
-  isQueryingValues: false, values: null,
-  page: { offset: 0, limit: 50 },
+const initialColumns = Immutable.Map({
+  isQuerying: false, columnList: null,
 });
 
 let objectsByName = handleActions({
@@ -68,7 +65,7 @@ let objectsByName = handleActions({
       switch(type) {
         case 'table':
         case 'view':
-          object = object.merge(initialViewAndTable);
+          object = object.set('columns', initialColumns);
           break;
       }
 
@@ -89,7 +86,8 @@ let objectsByName = handleActions({
     switch(object.get('type')) {
       case 'table':
       case 'view':
-        object = object.merge({ isQueryingColumns: true, columns: null });
+        object = object.set('columns',
+          initialColumns.merge({ isQuerying: true }));
         break;
     }
 
@@ -108,9 +106,9 @@ let objectsByName = handleActions({
     switch(object.get('type')) {
       case 'table':
       case 'view':
-        object = object.merge({
-          isQueryingColumns: false, columns: response.columns
-        });
+        let { columns } = response;
+        object = object.set('columns',
+          initialColumns.merge({ columnList: columns }));
         break;
     }
 

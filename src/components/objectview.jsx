@@ -3,10 +3,10 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import TableView from './tableview.jsx';
 
 let ObjectView = props => {
-  if(!props.info) { return <div>no object</div>; }
+  let { object } = props;
+  if(!object) { return <div>no object</div>; }
 
-  let type = props.info.get('type');
-  switch(type) {
+  switch(object.get('type')) {
     case 'table':
     case 'view':
       return <TableView {...props} />
@@ -17,7 +17,7 @@ let ObjectView = props => {
 
 ObjectView.propTypes = {
   readOnlyQuery: React.PropTypes.func.isRequired,
-  info: ImmutablePropTypes.mapContains({
+  object: ImmutablePropTypes.contains({
     name: React.PropTypes.string.isRequired,
     type: React.PropTypes.string.isRequired,
     sql: React.PropTypes.string.isRequired,
