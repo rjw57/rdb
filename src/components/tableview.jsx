@@ -2,6 +2,8 @@ import React from 'react'
 import { Tabs, Tab, Table } from 'react-bootstrap'
 import ImmutablePropTypes from 'react-immutable-proptypes';
 
+import TableDataView from './tabledataview.jsx';
+
 function renderColumnTable(columns) {
   let { isQuerying, columnList } = columns;
   if(!columnList && isQuerying) {
@@ -45,7 +47,7 @@ class TableView extends React.Component {
           <pre><code>{sql}</code></pre>
         </Tab>
         <Tab eventKey="data" title="Data">
-          <div>todo</div>
+          <TableDataView />
         </Tab>
       </Tabs>
     </section>);

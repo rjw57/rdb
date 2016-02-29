@@ -1,49 +1,36 @@
 import React from 'react'
 import { Table } from 'react-bootstrap';
 
-function queryData(query, name) {
-  return query(`SELECT * FROM [${name}] LIMIT 100`);
-}
+let TableDataView = props => {
+  let { columns, rows } = props;
 
-class TableDataView extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { data: null };
-    queryData(props.readOnlyQuery, props.name)
-      .then(data => this.setState({ data }));
-  }
+  if(!columns) { return <div />; }
+  if(!rows) { rows = []; }
 
-  render() {
-    if(!this.state.data) { return <div>No data</div>; }
-    let { columns, values } = this.state.data;
-    return (<Table>
+  return (
+    <Table>
       <thead>
-        <tr>
-          {columns.map((s, idx) => (<th key={idx}>{s}</th>))}
-        </tr>
+        <tr>{ columns.map((col, idx) => (
+          <th key={idx}>{ col.name }</th>
+        )) }</tr>
       </thead>
-      <tbody>
-        {values.map((row, rowIdx) => (
-          <tr key={rowIdx}>
-            {row.map((val, valIdx) => (<td key={valIdx}>{val}</td>))}
-          </tr>
-        ))}
+      <tbody>{ rows.map((row, rowIdx) => (
+          <tr>{ row.map((cell, cellIdx) => (
+            columns[cellIdx].format ? columns[cellIdx].format(cell) : cell
+          )) }</tr>
+        )) }
       </tbody>
-    </Table>);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // able name changed?
-    if(nextProps.name !== this.props.name) {
-      queryData(nextProps.readOnlyQuery, nextProps.name)
-        .then(data => this.setState({ data }));
-    }
-  }
+    </Table>
+  );
 }
 
 TableDataView.propTypes = {
-  readOnlyQuery: React.PropTypes.func.isRequired,
-  name: React.PropTypes.string.isRequired,
+  columns: React.PropTypes.arrayOf(React.PropTypes.shape({
+    name: React.PropTypes.string.isRequired,
+    format: React.PropTypes.func,
+  })),
+  rows: React.PropTypes.arrayOf(React.PropTypes.arrayOf(
+    React.PropTypes.object)),
 };
 
 export default TableDataView;
