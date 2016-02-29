@@ -6,7 +6,7 @@ import ObjectSelect from './objectselect.jsx';
 import ObjectView from './objectview.jsx';
 
 const SchemaBrowser = props => {
-  let { objects, selectedObject, readOnlyQuery, onSelectObjectName } = props;
+  let { objects, selectedObject, onSelectObjectName } = props;
   return (
     <Grid>
       <Row>
@@ -14,7 +14,7 @@ const SchemaBrowser = props => {
           <ObjectSelect objects={objects} onSelect={onSelectObjectName} />
         </Col>
         <Col md={9}>
-          <ObjectView readOnlyQuery={readOnlyQuery} object={selectedObject} />
+          <ObjectView object={selectedObject} />
         </Col>
       </Row>
     </Grid>
@@ -22,7 +22,6 @@ const SchemaBrowser = props => {
 }
 
 SchemaBrowser.propTypes = {
-  readOnlyQuery: React.PropTypes.func.isRequired,
   selectedObject: ImmutablePropTypes.map,
   objects: ImmutablePropTypes.mapOf(ImmutablePropTypes.map),
   onSelectObjectName: React.PropTypes.func,

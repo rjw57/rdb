@@ -36,8 +36,7 @@ let App = connect(stateToProps)(props => {
     <Tabs defaultActiveKey={1} animation={false}>
       <Tab eventKey={1} title="Schema">
         <SchemaBrowser
-          readOnlyQuery={readOnlyQuery} objects={objectsByName}
-          selectedObject={selectedObject}
+          objects={objectsByName} selectedObject={selectedObject}
           onSelectObjectName={name => dispatch(selectObject(name))}
         />
       </Tab>

@@ -16,7 +16,6 @@ let ObjectView = props => {
 };
 
 ObjectView.propTypes = {
-  readOnlyQuery: React.PropTypes.func.isRequired,
   object: ImmutablePropTypes.contains({
     name: React.PropTypes.string.isRequired,
     type: React.PropTypes.string.isRequired,

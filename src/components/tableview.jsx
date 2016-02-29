@@ -2,8 +2,6 @@ import React from 'react'
 import { Tabs, Tab, Table } from 'react-bootstrap'
 import ImmutablePropTypes from 'react-immutable-proptypes';
 
-import TableDataView from './tabledataview.jsx';
-
 function renderColumnTable(columns) {
   let { isQuerying, columnList } = columns;
   if(!columnList && isQuerying) {
@@ -30,29 +28,31 @@ function renderColumnTable(columns) {
   );
 }
 
-let TableView = props => {
-  let { readOnlyQuery } = props;
-  let { name, sql, columns } = props.object.toJS();
-  let columnTable = renderColumnTable(columns);
+class TableView extends React.Component {
+  render() {
+    let { object } = this.props;
+    if(!object) { return <div />; }
 
-  return (<section className="tableView">
-    <h2>{name}</h2>
-    <Tabs defaultActiveKey={"cols"}>
-      <Tab eventKey="cols" title="Columns">
-        { columnTable }
-      </Tab>
-      <Tab eventKey="sql" title="SQL">
-        <pre><code>{sql}</code></pre>
-      </Tab>
-      <Tab eventKey="data" title="Data">
-        <TableDataView name={name} readOnlyQuery={readOnlyQuery} />
-      </Tab>
-    </Tabs>
-  </section>);
-};
+    let { name, sql, columns } = object.toJS();
+
+    return (<section className="tableView">
+      <h2>{name}</h2>
+      <Tabs defaultActiveKey={"cols"}>
+        <Tab eventKey="cols" title="Columns">
+          {renderColumnTable(columns)}
+        </Tab>
+        <Tab eventKey="sql" title="SQL">
+          <pre><code>{sql}</code></pre>
+        </Tab>
+        <Tab eventKey="data" title="Data">
+          <div>todo</div>
+        </Tab>
+      </Tabs>
+    </section>);
+  }
+}
 
 TableView.propTypes = {
-  readOnlyQuery: React.PropTypes.func.isRequired,
   object: ImmutablePropTypes.mapContains({
     name: React.PropTypes.string.isRequired,
     type: React.PropTypes.string.isRequired,
